@@ -1,4 +1,4 @@
 -------------------------------------------------------------------------------
 Test set: mz.project.cheaptrip.CheaptripApplicationTests
 -------------------------------------------------------------------------------
-Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.07 s - in mz.project.cheaptrip.CheaptripApplicationTests
+Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.092 s - in mz.project.cheaptrip.CheaptripApplicationTests

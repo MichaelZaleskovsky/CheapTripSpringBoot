@@ -22,16 +22,6 @@ public class DbAccess {
 
     public List<LocationDb> getLocations(String typeStr, String searchName, int limit) {
 
-        Location[] locs = {
-                new Location(100, "Moscow"),
-                new Location(101, "Tel-Aviv"),
-                new Location(102, "London"),
-                new Location(103, "Beijing"),
-                new Location(104, "Paris"),
-                new Location(105, "Berlin"),
-                new Location(106, "Krakow")
-        };
-
         String locSql = "SELECT * FROM location_db WHERE id IN (SELECT `" + typeStr + "` FROM route_db) " +
                 "AND `name` LIKE '%" + searchName + "%' " +
                 "ORDER BY CASE WHEN name LIKE '" + searchName + "%' THEN 0 ELSE 1 END LIMIT " + limit;
@@ -39,47 +29,8 @@ public class DbAccess {
         List<LocationDb> locations = em.createNativeQuery(locSql, LocationDb.class)
                 .getResultList();
 
-        String locJpql = "SELECT l FROM LocationDb l ";
         return locations;
     }
-
-/*
-    public Route getRoute(String routeType, int from, int to) {
-        String routesHpql = "SELECT routesDb FROM RoutesDb routesDb WHERE " +
-                "routesDb.from = :from AND " +
-                "routesDb.to = :to AND " +
-                "routesDb.routeType = :type";
-
-        List<RoutesDb> routesData = em.createQuery(routesHpql)
-                .setParameter("from", ""+from)
-                .setParameter("to", ""+to)
-                .setParameter("type", routeType)
-                .getResultList();
-
-        String routesId = routesData
-                .stream().map(RoutesDb::getTravelData)
-                .findFirst()
-                .orElse("");
-
-        List<Line> lines = Arrays.stream(routesId
-                .split(","))
-                .filter(str -> !str.isEmpty())
-                .map(strId -> em.find(LineDb.class, Long.parseLong(strId)))
-                .map(Line::new)
-                .collect(Collectors.toList());
-
-        Route result = new Route();
-        result.setDirect_paths(lines);
-        result.setDuration_minutes(lines
-                .stream()
-                .mapToInt(Line::getDuration_minutes)
-                .sum());
-        result.setEuro_price(lines.stream().mapToDouble(Line::getEuro_price).sum());
-        result.setRouteType(routeType);
-
-        return result;
-    }
-*/
 
     @Transactional
     public String addLocation(Location location) {
@@ -119,7 +70,6 @@ public class DbAccess {
         route.setRouteType(routeType);
 
         em.persist(route);
-
     }
 
     public RouteDb getRouteDb(String routeType, long from, long to) {
@@ -130,6 +80,7 @@ public class DbAccess {
         return em.find(LineDb.class, id);
     }
 
+    @Transactional
     public void UpdateRoute(RouteDb routeDb, List<LineDb> lines) {
         routeDb.setLines(lines);
         em.flush();
@@ -149,5 +100,11 @@ public class DbAccess {
 
     public LocationDb getLocation(long id) {
         return em.find(LocationDb.class, id);
+    }
+
+    public List<String> checkStatus(){
+        List<String> list = em.createNativeQuery("SHOW TABLES")
+                .getResultList();
+        return list;
     }
 }

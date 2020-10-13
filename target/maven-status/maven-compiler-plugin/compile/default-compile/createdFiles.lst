@@ -1,3 +1,4 @@
+mz\project\cheaptrip\controllers\StatusController.class
 mz\project\cheaptrip\entities\LocationDb.class
 mz\project\cheaptrip\configurations\CorsCofiguration$1.class
 mz\project\cheaptrip\httpmodels\LineRes.class
