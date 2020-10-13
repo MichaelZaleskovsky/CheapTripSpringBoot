@@ -52,11 +52,9 @@ public class DataLoader {
                 new LineReq("Bus", 222.2, 112, 106,107)
         };
 
-/*
         for (LineReq line : lines) {
             sendPost(mapper.writeValueAsString(line), addLine);
         }
-*/
 
         String addRoute = "/routes";
         NewRoute[] routes = {
