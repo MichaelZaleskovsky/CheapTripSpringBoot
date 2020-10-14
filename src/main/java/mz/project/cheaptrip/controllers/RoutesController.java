@@ -24,7 +24,7 @@ public class RoutesController {
     /*
      * Return routes between 2 locations
      * GET host/routes?from=101&to=102
-     * RETURN [Route1, Route2, Route3]
+     * RETURN Lost<Route>
      **/
     @SuppressWarnings("rawtypes")
     @GetMapping

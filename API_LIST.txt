@@ -1,0 +1,73 @@
+host: http://52.14.161.122/
+
+API LIST
+
+Add new line into Database
+POST host/lines
+BODY LineReq
+RESPONSE String message
+
+
+Get all lines from Locatioi by it's ID
+POST host/lines/all/{locationId}
+PARAMETER locationId - number
+RESPONSE:
+STATUS 200 - List<LineRes>
+STATUS 404 - String message
+
+
+Return list of locations filtered by search_string
+GET host/locations
+PARAMETERS:
+   type - 'from' or 'to'
+   search_name - string
+   limit - number (not mandatory, default - 10)
+RESPONSE:
+   400 - type mismatch message
+   200 - List<Location>
+
+
+Add new location to Database
+POST host/locations
+BODY: Location
+RESPONSE:
+   201 - Success message
+   406 - Location ID exist message
+   400 - Database error message
+
+
+Return routes between 2 locations
+GET host/routes?from=101&to=102
+PARAMETERS:
+    from - number
+    to - number
+RETURN Lost<Route>
+
+
+Add new route between 2 locations. Successful only if no such route in database
+POST host/routes
+BODY NewRoute
+RETURN message
+SUCCESS Status 200
+ERROR Status 406
+
+
+Update lines in distinct route between 2 locations. Successful only if such route presented in database
+PUT host/routes
+BODY NewRoute
+RETURN message
+SUCCESS Status 200
+ERROR Status 404
+
+
+Delete route between 2 locations. Successful only if such route presented in database
+DELETE host/routes
+BODY NewRoute
+RETURN message
+SUCCESS Status 200
+ERROR Status 404
+
+
+Health server and database status check
+GET host/status
+RESPONSE - Status message

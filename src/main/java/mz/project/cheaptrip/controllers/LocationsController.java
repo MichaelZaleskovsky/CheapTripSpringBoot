@@ -8,6 +8,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.persistence.EntityExistsException;
+import java.util.List;
 
 @RestController
 public class LocationsController {
@@ -20,6 +21,17 @@ public class LocationsController {
     private static final String FROM = "from";
     private static final String TYPE_MISMATCH = "Parameter 'type' must be 'from' or 'to'";
 
+    /*
+    * Return list of locations filtered by search_string
+    * GET host/locations
+    * PARAMETERS:
+    *   type - 'from' or 'to'
+    *   search_name - string
+    *   limit - number (not mandatory, default - 10)
+    * RESPONSE:
+    *   400 - type mismatch message
+    *   200 - List<Location>
+    **/
     @GetMapping("/locations")
     ResponseEntity getLocations(@RequestParam String type,
                                 @RequestParam(name =  "search_name") String searchName,
@@ -28,9 +40,19 @@ public class LocationsController {
         if (!typeStr.equals(TO) && !typeStr.equals(FROM))
             return new ResponseEntity<>(TYPE_MISMATCH, HttpStatus.BAD_REQUEST);
 
-        return new ResponseEntity<>(routesService.getLocations(typeStr, searchName, limit), HttpStatus.OK);
+        List<Location> list = routesService.getLocations(typeStr, searchName, limit);
+        return new ResponseEntity<>(list, HttpStatus.OK);
     }
 
+    /*
+    * Add new location to Database
+    * POST host/locations
+    * BODY: Location
+    * RESPONSE:
+    *   201 - Success message
+    *   406 - Location ID exist message
+    *   400 - Database error message
+    **/
     @PostMapping("/locations")
     ResponseEntity<String> addLocations (@RequestBody Location location) {
 

@@ -17,6 +17,11 @@ public class StatusController {
     @Value("${active.profile}")
     private String profile;
 
+    /*
+    * Health server and database status check
+    * GET host/status
+    * RESPONSE - Status message
+    **/
     @GetMapping("/status")
     public String getStatus(){
         String res = "Server is active \n";
