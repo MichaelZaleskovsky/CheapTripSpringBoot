@@ -1,9 +1,6 @@
 package mz.project.cheaptrip.dao;
 
-import mz.project.cheaptrip.entities.LineDb;
-import mz.project.cheaptrip.entities.LocationDb;
-import mz.project.cheaptrip.entities.RouteDb;
-import mz.project.cheaptrip.entities.RouteKey;
+import mz.project.cheaptrip.entities.*;
 import mz.project.cheaptrip.httpmodels.LineReq;
 import mz.project.cheaptrip.httpmodels.Location;
 import org.springframework.stereotype.Repository;
@@ -51,14 +48,21 @@ public class DbAccess {
     @Transactional
     public void addLine(LineReq line) {
         LineDb lineDb = new LineDb();
-        lineDb.setDurationMinutes(line.getDuration_minutes());
-        lineDb.setEuroPrice(line.getEuro_price());
+
+        lineDb.setId(line.getId());
+
+        lineDb.setTimeImMinutes(line.getDuration_minutes());
+        lineDb.setPrice(line.getPrice());
         lineDb.setFrom(line.getFrom_id());
         lineDb.setTo(line.getTo_id());
-        lineDb.setTransportationType(line.getTransportation_type());
+        lineDb.setLine(line.getLine());
+        TransportDb transport = em.find(TransportDb.class, line.getTransportType());
+        CurrencyDb curr = em.find(CurrencyDb.class, line.getCurrencyId());
 
         em.persist(lineDb);
 
+        lineDb.setTransport(transport);
+        lineDb.setCurrency(curr);
     }
 
     @Transactional
@@ -106,5 +110,25 @@ public class DbAccess {
         List<String> list = em.createNativeQuery("SHOW TABLES")
                 .getResultList();
         return list;
+    }
+
+    @Transactional
+    public void addTransport(TransportDb transport) {
+        em.persist(transport);
+    }
+
+    public List<TransportDb> getTransports() {
+        String jpql = "SELECT t from TransportDb t";
+        return em.createQuery(jpql).getResultList();
+    }
+
+    @Transactional
+    public void addCurrency(CurrencyDb curr) {
+        em.persist(curr);
+    }
+
+    public List<CurrencyDb> getCurrencies() {
+        String jpql = "SELECT c from CurrencyDb c";
+        return em.createQuery(jpql).getResultList();
     }
 }

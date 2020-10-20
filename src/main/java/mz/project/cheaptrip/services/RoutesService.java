@@ -1,8 +1,10 @@
 package mz.project.cheaptrip.services;
 
 import mz.project.cheaptrip.dao.DbAccess;
+import mz.project.cheaptrip.entities.CurrencyDb;
 import mz.project.cheaptrip.entities.LineDb;
 import mz.project.cheaptrip.entities.RouteDb;
+import mz.project.cheaptrip.entities.TransportDb;
 import mz.project.cheaptrip.httpmodels.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -122,5 +124,21 @@ public class RoutesService {
                 .map(LineRes::new)
                 .collect(Collectors.toList());
         return result;
+    }
+
+    public void addTransport(TransportDb transport) {
+        dbAccess.addTransport(transport);
+    }
+
+    public List<TransportDb> getTransports() {
+        return dbAccess.getTransports();
+    }
+
+    public void addCurrency(CurrencyDb curr) {
+        dbAccess.addCurrency(curr);
+    }
+
+    public List<CurrencyDb> getCurrencies() {
+        return dbAccess.getCurrencies();
     }
 }

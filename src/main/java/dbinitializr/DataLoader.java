@@ -2,12 +2,15 @@ package dbinitializr;
 
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import mz.project.cheaptrip.entities.CurrencyDb;
+import mz.project.cheaptrip.entities.TransportDb;
 import mz.project.cheaptrip.httpmodels.LineReq;
 import mz.project.cheaptrip.httpmodels.NewRoute;
 import mz.project.cheaptrip.services.RoutesService;
 import okhttp3.*;
 
 import java.io.IOException;
+import java.math.BigDecimal;
 //import static io.restassured.RestAssured.given;
 
 
@@ -15,6 +18,7 @@ public class DataLoader {
 
     private static final OkHttpClient httpClient = new OkHttpClient();
     static String domen ="http://localhost:8080";
+//    static String domen ="http://52.14.161.122:8080";
     static ObjectMapper mapper = new ObjectMapper();
 
 
@@ -40,16 +44,30 @@ public class DataLoader {
             sendPost(json, location);
         }
 
+        CurrencyDb curr1 = new CurrencyDb(1, "str", "str", "str", "str", new BigDecimal(1));
+        CurrencyDb curr2 = new CurrencyDb(2, "str1", "str1", "str1", "str1", new BigDecimal(1));
+        String addCurr = "/currencies";
+        sendPost(mapper.writeValueAsString(curr1), addCurr);
+        sendPost(mapper.writeValueAsString(curr2), addCurr);
+
+        TransportDb trans1 = new TransportDb(1, "Flight");
+        TransportDb trans2 = new TransportDb(2, "Bus");
+        TransportDb trans3 = new TransportDb(3, "Train");
+        String addTrans = "/transports";
+        sendPost(mapper.writeValueAsString(trans1), addTrans);
+        sendPost(mapper.writeValueAsString(trans2), addTrans);
+        sendPost(mapper.writeValueAsString(trans3), addTrans);
+
         String getLocations = "/locations?type=from&search_name=a";
         String addLine = "/lines";
         LineReq[] lines = {
-                new LineReq("Bus", 33.2, 123, 100, 105),
-                new LineReq("Flight", 32.2, 113, 101,102),
-                new LineReq("Car", 13.2, 23, 103,105),
-                new LineReq("Bus", 53.5, 19, 104,110),
-                new LineReq("Flight", 34.2, 90, 111,105),
-                new LineReq("Flight", 133.2, 33, 105,110),
-                new LineReq("Bus", 222.2, 112, 106,107)
+                new LineReq(1, 1, new BigDecimal(33.2), 1, "", 123, 100, 105),
+                new LineReq(2, 2, new BigDecimal(32.2), 1, "", 113, 101,102),
+                new LineReq(3, 3, new BigDecimal(13.2), 1, "", 23, 103,105),
+                new LineReq(4, 1, new BigDecimal(53.5), 1, "", 19, 104,110),
+                new LineReq(5, 2, new BigDecimal(34.2), 1, "", 90, 111,105),
+                new LineReq(6, 3, new BigDecimal(133.2), 1, "", 33, 105,110),
+                new LineReq(7, 1, new BigDecimal(222.2), 1, "", 112, 106,107)
         };
 
         for (LineReq line : lines) {

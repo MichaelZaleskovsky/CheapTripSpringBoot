@@ -5,6 +5,7 @@ import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.math.BigDecimal;
 
 @Entity
 @Data
@@ -13,17 +14,26 @@ import javax.persistence.*;
 public class LineDb {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+//    @GeneratedValue(strategy = GenerationType.AUTO)
     private long id;
 
-    @Column(name = "transportation_type")
-    private String transportationType;
+    @ManyToOne
+    private TransportDb transport;
 
+/*
     @Column(name = "euro_price")
     private double euroPrice;
+*/
 
-    @Column(name = "duration_minutes")
-    private int durationMinutes;
+    @Column(scale=2)
+    private BigDecimal price;
+
+    @ManyToOne
+    private CurrencyDb currency;
+
+    private String line;
+
+    private int timeImMinutes;
 
     @Column(name = "`from`")
     private long from;
