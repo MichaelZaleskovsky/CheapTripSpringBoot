@@ -17,8 +17,8 @@ import java.math.BigDecimal;
 public class DataLoader {
 
     private static final OkHttpClient httpClient = new OkHttpClient();
-    static String domen ="http://localhost:8080";
-//    static String domen ="http://52.14.161.122:8080";
+    //    static String domen ="http://localhost:8080";
+    static String domen ="http://52.14.161.122:8080";
     static ObjectMapper mapper = new ObjectMapper();
 
 
@@ -40,23 +40,29 @@ public class DataLoader {
                 "{\"id\":110,\"name\":\"Acnorij\"}"
         };
 
+/*
         for (String json : jsons) {
             sendPost(json, location);
         }
+*/
 
         CurrencyDb curr1 = new CurrencyDb(1, "str", "str", "str", "str", new BigDecimal(1));
         CurrencyDb curr2 = new CurrencyDb(2, "str1", "str1", "str1", "str1", new BigDecimal(1));
         String addCurr = "/currencies";
+/*
         sendPost(mapper.writeValueAsString(curr1), addCurr);
         sendPost(mapper.writeValueAsString(curr2), addCurr);
+*/
 
         TransportDb trans1 = new TransportDb(1, "Flight");
         TransportDb trans2 = new TransportDb(2, "Bus");
         TransportDb trans3 = new TransportDb(3, "Train");
         String addTrans = "/transports";
+/*
         sendPost(mapper.writeValueAsString(trans1), addTrans);
         sendPost(mapper.writeValueAsString(trans2), addTrans);
         sendPost(mapper.writeValueAsString(trans3), addTrans);
+*/
 
         String getLocations = "/locations?type=from&search_name=a";
         String addLine = "/lines";
@@ -70,9 +76,11 @@ public class DataLoader {
                 new LineReq(7, 1, new BigDecimal(222.2), 1, "", 112, 106,107)
         };
 
+/*
         for (LineReq line : lines) {
             sendPost(mapper.writeValueAsString(line), addLine);
         }
+*/
 
         String addRoute = "/routes";
         NewRoute[] routes = {

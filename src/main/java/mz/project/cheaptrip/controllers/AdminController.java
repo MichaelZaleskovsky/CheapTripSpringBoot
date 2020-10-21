@@ -82,4 +82,9 @@ public class AdminController {
         return "Updated "+transfer.lines()+" lines";
     }
 
+    @GetMapping("/update/routes")
+    private String updateRoutes(){
+        return "Updated "+transfer.routes()+" routes";
+    }
+
 }

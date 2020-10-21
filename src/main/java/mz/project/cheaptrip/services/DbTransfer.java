@@ -5,6 +5,7 @@ import mz.project.cheaptrip.entities.CurrencyDb;
 import mz.project.cheaptrip.entities.TransportDb;
 import mz.project.cheaptrip.httpmodels.LineReq;
 import mz.project.cheaptrip.httpmodels.Location;
+import mz.project.cheaptrip.httpmodels.NewRoute;
 import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
@@ -17,7 +18,9 @@ import java.io.IOException;
 import java.math.BigDecimal;
 import java.sql.*;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class DbTransfer {
@@ -139,12 +142,12 @@ public class DbTransfer {
     public long lines() {
         long result = 0;
 
-        try (Connection conn = DriverManager.getConnection(sqlUrl)) {
-
 // TRAVEL_DATA
-            String query = "SELECT * FROM travel_data";
+        String query = "SELECT * FROM travel_data";
 
-            PreparedStatement statement = conn.prepareStatement(query);
+        try (Connection conn = DriverManager.getConnection(sqlUrl);
+             PreparedStatement statement = conn.prepareStatement(query);) {
+
             statement.execute();
             ResultSet linesResultSet = statement.getResultSet();
             List<LineReq> lines = new ArrayList<>();
@@ -165,6 +168,80 @@ public class DbTransfer {
             result = lines.stream()
                     .peek(line -> {service.addLine(line);
                                   System.out.println("Sent to new DB: "+line);})
+                    .count();
+
+        } catch (SQLException ex) {
+            // handle any errors
+            System.out.println("SQLException: " + ex.getMessage());
+            System.out.println("SQLState: " + ex.getSQLState());
+            System.out.println("VendorError: " + ex.getErrorCode());
+        }
+
+        return result;
+    }
+
+    public long routes() {
+        long result = 0;
+
+// fixed_routes flying_routes routes
+        String queryGro = "SELECT * FROM fixed_routes";
+        String queryFly = "SELECT * FROM flying_routes";
+        String queryMix = "SELECT * FROM routes";
+
+        try (Connection conn = DriverManager.getConnection(sqlUrl);
+             PreparedStatement statementMix = conn.prepareStatement(queryMix);
+             PreparedStatement statementFly = conn.prepareStatement(queryFly);
+             PreparedStatement statementGro = conn.prepareStatement(queryGro);) {
+
+            List<NewRoute> routes = new ArrayList<>();
+            String routeType;
+
+            statementMix.execute();
+            ResultSet statementMixSet = statementMix.getResultSet();
+            routeType = RoutesService.MIX_ROUTE;
+
+            while (statementMixSet.next()) {
+                String travelData = statementMixSet.getString("travel_data");
+                int from = statementMixSet.getInt("from");
+                int to = statementMixSet.getInt("to");
+                System.out.println("Location read from DB: from " + from + " to " + to);
+
+                routes.add(new NewRoute(from, to, routeType, travelData));
+            }
+
+            statementFly.execute();
+            ResultSet statementFlySet = statementFly.getResultSet();
+            routeType = RoutesService.FLY_ROUTE;
+
+            while (statementFlySet.next()) {
+                String travelData = statementFlySet.getString("travel_data");
+                int from = statementFlySet.getInt("from");
+                int to = statementFlySet.getInt("to");
+                System.out.println("Location read from DB: from " + from + " to " + to);
+
+                routes.add(new NewRoute(from, to, routeType, travelData));
+            }
+
+            statementGro.execute();
+            ResultSet statementGroSet = statementGro.getResultSet();
+            routeType = RoutesService.MIX_ROUTE;
+
+            while (statementMixSet.next()) {
+                String travelData = statementMixSet.getString("travel_data");
+                int from = statementGroSet.getInt("from");
+                int to = statementGroSet.getInt("to");
+                System.out.println("Location read from DB: from " + from + " to " + to);
+
+                routes.add(new NewRoute(from, to, routeType, travelData));
+            }
+
+            result = routes.stream()
+                    .peek(route -> {
+                        List<Long> list = Arrays.stream(route.getTravelData().split("."))
+                                .map(Long::parseLong)
+                                .collect(Collectors.toList());
+                        service.addRoute(route, list);
+                        System.out.println("Sent to new DB: "+route);})
                     .count();
 
         } catch (SQLException ex) {
